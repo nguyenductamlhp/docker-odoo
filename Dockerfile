@@ -1,16 +1,17 @@
 ############################################################
-# Fullstack OpenERP 8.0 server
+# Fullstack odoo 8.0 server
 ############################################################
 
-FROM trobz/sshd:14.04
+FROM nguyenductamlhp/docker-sshd:16.04
 
-MAINTAINER Michel Meyer <mmeyer@trobz.com>
+MAINTAINER Michel Meyer <mmeyer@trobz.com> Nguyen Duc Tam <nguyenductamlhp@gmail.com>
 
 # Prepare for the setup 
 ############################################################
-
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" >> /etc/apt/sources.list.d/pgdg.list
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 RUN apt-get update
-RUN apt-get install -y postgresql postgresql-contrib-9.3
+RUN apt-get install -y postgresql-10
 RUN apt-get update && apt-get dist-upgrade -y
 
 # Install all services
@@ -40,9 +41,9 @@ ADD config/supervisor/postgres.conf /etc/supervisor/conf.d/postgres.conf
 RUN updatedb
 
 # change default user configuration
-ENV USERNAME openerp
-ENV PASSWORD openerp
-ENV USER_HOME /opt/openerp
+ENV USERNAME odoo
+ENV PASSWORD odoo
+ENV USER_HOME /opt/odoo
 ENV ODOO_DEMO 0
 
 # Add odoo 8.0 demo files
@@ -53,7 +54,7 @@ ADD demo /tmp/setup/odoo/demo
 # Finalization
 ############################################################
 
-# expose openerp/postgres port
+# expose odoo/postgres port
 EXPOSE 8069 5432 22
 
 # enable interactive debconf again
